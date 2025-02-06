@@ -33,9 +33,14 @@ function Board() {
     status = `Next Player: ${xIsNext ? 'x' : 'o'}`;
   }
 
+  // event handler untuk bermain lagi
   function playAgainHandle() {
     setCells(Array(9).fill(null));
-    setXisNext(winner === 'x' ? true : false);
+    if (winner === 'draw') {
+      setXisNext(xIsNext);
+    } else {
+      setXisNext(winner === 'x' ? true : false);
+    }
   }
 
   return (
@@ -81,6 +86,11 @@ function calculateWinner(cells) {
     if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
       return cells[a];
     }
+  }
+
+  // jika semua cell sudah terisi dan tidak ada pemenang keluar
+  if (!cells.includes(null)) {
+    return 'draw';
   }
   return null;
 }
