@@ -58,8 +58,7 @@ function Board() {
         <Cell value={cells[8]} onCellClick={() => handleClick(8)} />
       </div>
       <button
-        className="play-again-btn"
-        disabled={winner ? false : true}
+        className={'play-again-btn ' + (winner ? 'show' : '')}
         onClick={playAgainHandle}
       >
         Play Again

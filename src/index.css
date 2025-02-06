@@ -21,8 +21,12 @@ body {
 .play-again-btn {
   text-align: center;
   margin: auto;
-  display: block;
   margin-top: 30px;
+  display: none;
+}
+
+.play-again-btn.show {
+  display: block;
 }
 
 .board {
