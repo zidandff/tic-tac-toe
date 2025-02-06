@@ -13,38 +13,52 @@ function Board() {
   const [xIsNext, setXisNext] = useState(true);
 
   function handleClick(index) {
-    if (cells[index]) {
-      return;
-    }
+    // jika cells sudah terisi keluar dari function untuk menghindari override cells
+    if (cells[index] || calculateWinner(cells)) return;
 
+    // duplikat array agar menerapkan immutability
     const newCells = cells.slice();
-
     newCells[index] = xIsNext ? 'x' : 'o';
     setCells(newCells);
-    const winner = calculateWinner(newCells);
-    console.log(winner);
-    if (winner === 'x') {
-      console.log('X is the winner');
-      setXisNext(true);
-    } else if (winner === 'o') {
-      console.log('O is the winner');
-      setXisNext(false);
-    } else {
-      setXisNext(!xIsNext);
-    }
+    setXisNext(!xIsNext);
+  }
+
+  // cek apakah sudah ada pemenang
+  const winner = calculateWinner(cells);
+  console.log(winner);
+  let status;
+  if (winner) {
+    status = `Winner: ${winner}`;
+  } else {
+    status = `Next Player: ${xIsNext ? 'x' : 'o'}`;
+  }
+
+  function playAgainHandle() {
+    setCells(Array(9).fill(null));
+    setXisNext(winner === 'x' ? true : false);
   }
 
   return (
-    <div className="board">
-      <Cell value={cells[0]} onCellClick={() => handleClick(0)} />
-      <Cell value={cells[1]} onCellClick={() => handleClick(1)} />
-      <Cell value={cells[2]} onCellClick={() => handleClick(2)} />
-      <Cell value={cells[3]} onCellClick={() => handleClick(3)} />
-      <Cell value={cells[4]} onCellClick={() => handleClick(4)} />
-      <Cell value={cells[5]} onCellClick={() => handleClick(5)} />
-      <Cell value={cells[6]} onCellClick={() => handleClick(6)} />
-      <Cell value={cells[7]} onCellClick={() => handleClick(7)} />
-      <Cell value={cells[8]} onCellClick={() => handleClick(8)} />
+    <div className="game-board">
+      <p className="status">{status}</p>
+      <div className="board">
+        <Cell value={cells[0]} onCellClick={() => handleClick(0)} />
+        <Cell value={cells[1]} onCellClick={() => handleClick(1)} />
+        <Cell value={cells[2]} onCellClick={() => handleClick(2)} />
+        <Cell value={cells[3]} onCellClick={() => handleClick(3)} />
+        <Cell value={cells[4]} onCellClick={() => handleClick(4)} />
+        <Cell value={cells[5]} onCellClick={() => handleClick(5)} />
+        <Cell value={cells[6]} onCellClick={() => handleClick(6)} />
+        <Cell value={cells[7]} onCellClick={() => handleClick(7)} />
+        <Cell value={cells[8]} onCellClick={() => handleClick(8)} />
+      </div>
+      <button
+        className="play-again-btn"
+        disabled={winner ? false : true}
+        onClick={playAgainHandle}
+      >
+        Play Again
+      </button>
     </div>
   );
 }
