@@ -8,6 +8,12 @@ body {
   min-height: 100vh;
 }
 
+.game {
+  display: flex;
+  justify-content: center;
+  margin-top: 150px;
+}
+
 .game-board {
   margin-top: 150px;
   /* background-color: red; */
