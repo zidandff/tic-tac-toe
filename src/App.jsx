@@ -8,10 +8,7 @@ function Cell({ value, onCellClick }) {
   );
 }
 
-function Board() {
-  const [cells, setCells] = useState(Array(9).fill(null));
-  const [xIsNext, setXisNext] = useState(true);
-
+function Board({ cells, xIsNext, onPlay }) {
   function handleClick(index) {
     // jika cells sudah terisi keluar dari function untuk menghindari override cells
     if (cells[index] || calculateWinner(cells)) return;
@@ -19,13 +16,12 @@ function Board() {
     // duplikat array agar menerapkan immutability
     const newCells = cells.slice();
     newCells[index] = xIsNext ? 'x' : 'o';
-    setCells(newCells);
-    setXisNext(!xIsNext);
+    onPlay(newCells); // kirim cells baru ke history
   }
 
   // cek apakah sudah ada pemenang
   const winner = calculateWinner(cells);
-  console.log(winner);
+  // console.log(winner);
   let status;
   if (winner) {
     status = `Winner: ${winner}`;
@@ -34,14 +30,14 @@ function Board() {
   }
 
   // event handler untuk bermain lagi
-  function playAgainHandle() {
-    setCells(Array(9).fill(null));
-    if (winner === 'draw') {
-      setXisNext(xIsNext);
-    } else {
-      setXisNext(winner === 'x' ? true : false);
-    }
-  }
+  // function playAgainHandle() {
+  //   setCells(Array(9).fill(null));
+  //   if (winner === 'draw') {
+  //     setXisNext(xIsNext);
+  //   } else {
+  //     setXisNext(winner === 'x' ? true : false);
+  //   }
+  // }
 
   return (
     <div className="game-board">
@@ -57,12 +53,65 @@ function Board() {
         <Cell value={cells[7]} onCellClick={() => handleClick(7)} />
         <Cell value={cells[8]} onCellClick={() => handleClick(8)} />
       </div>
-      <button
+      {/* <button
         className={'play-again-btn ' + (winner ? 'show' : '')}
         onClick={playAgainHandle}
       >
         Play Again
-      </button>
+      </button> */}
+    </div>
+  );
+}
+
+function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [xIsNext, setXisNext] = useState(true);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentCells = history[currentMove];
+
+  // history = [
+  //   {
+  //     xIsNext: true,
+  //     cells: [null, null, null, null, null, null, null, null, null]
+  //   },
+  //   {
+  //     xIsNext: true,
+  //     cells: [null, null, null, null, null, null, null, null, null]
+  //   }
+  // ]
+  function handlePlay(newCells) {
+    // console.log(history);
+    // console.log([...history.slice(0, currentMove + 1), newCells]);
+    const newHistory = [...history.slice(0, currentMove + 1), newCells];
+    setHistory(newHistory);
+    setCurrentMove(newHistory.length - 1);
+    setXisNext(!xIsNext);
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+    // console.log(history[nextMove]);
+  }
+
+  const historyMove = history.map((cell, move) => {
+    let moveText;
+    if (move > 0) {
+      moveText = `go to move #${move}`;
+    } else {
+      moveText = 'Go to game start';
+    }
+
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{moveText}</button>
+      </li>
+    );
+  });
+
+  return (
+    <div className="game">
+      <Board cells={currentCells} xIsNext={xIsNext} onPlay={handlePlay} />
+      <ol className="history-move">{historyMove}</ol>
     </div>
   );
 }
@@ -94,4 +143,4 @@ function calculateWinner(cells) {
   return null;
 }
 
-export default Board;
+export default Game;
