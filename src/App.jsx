@@ -8,7 +8,8 @@ function Cell({ value, onCellClick }) {
   );
 }
 
-function Board({ cells, xIsNext, onPlay }) {
+function Board({ cells, xIsNext, onPlay, onPlayAgain }) {
+  // handle saat cells diklik
   function handleClick(index) {
     // jika cells sudah terisi keluar dari function untuk menghindari override cells
     if (cells[index] || calculateWinner(cells)) return;
@@ -21,7 +22,7 @@ function Board({ cells, xIsNext, onPlay }) {
 
   // cek apakah sudah ada pemenang
   const winner = calculateWinner(cells);
-  // console.log(winner);
+
   let status;
   if (winner) {
     status = `Winner: ${winner}`;
@@ -53,12 +54,12 @@ function Board({ cells, xIsNext, onPlay }) {
         <Cell value={cells[7]} onCellClick={() => handleClick(7)} />
         <Cell value={cells[8]} onCellClick={() => handleClick(8)} />
       </div>
-      {/* <button
+      <button
         className={'play-again-btn ' + (winner ? 'show' : '')}
-        onClick={playAgainHandle}
+        onClick={() => onPlayAgain(winner)}
       >
         Play Again
-      </button> */}
+      </button>
     </div>
   );
 }
@@ -79,6 +80,16 @@ function Game() {
   //     cells: [null, null, null, null, null, null, null, null, null]
   //   }
   // ]
+  function handlePlayAgain(winner) {
+    setHistory([Array(9).fill(null)]);
+    setCurrentMove(0);
+    if (winner === 'draw') {
+      setXisNext(xIsNext);
+    } else {
+      setXisNext(winner === 'x' ? true : false);
+    }
+  }
+
   function handlePlay(newCells) {
     // console.log(history);
     // console.log([...history.slice(0, currentMove + 1), newCells]);
@@ -110,13 +121,19 @@ function Game() {
 
   return (
     <div className="game">
-      <Board cells={currentCells} xIsNext={xIsNext} onPlay={handlePlay} />
+      <Board
+        cells={currentCells}
+        xIsNext={xIsNext}
+        onPlay={handlePlay}
+        onPlayAgain={handlePlayAgain}
+      />
       <ol className="history-move">{historyMove}</ol>
     </div>
   );
 }
 
 function calculateWinner(cells) {
+  // console.log(cells);
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
