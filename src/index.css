@@ -57,3 +57,7 @@ body {
 .cell:hover {
   background-color: #eee;
 }
+
+.cell:active {
+  background-color: #ddd;
+}

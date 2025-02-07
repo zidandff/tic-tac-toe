@@ -91,8 +91,6 @@ function Game() {
   }
 
   function handlePlay(newCells) {
-    // console.log(history);
-    // console.log([...history.slice(0, currentMove + 1), newCells]);
     const newHistory = [...history.slice(0, currentMove + 1), newCells];
     setHistory(newHistory);
     setCurrentMove(newHistory.length - 1);
@@ -133,7 +131,6 @@ function Game() {
 }
 
 function calculateWinner(cells) {
-  // console.log(cells);
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
