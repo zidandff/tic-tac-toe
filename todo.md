@@ -7,4 +7,4 @@
 
 ## BUG
 
-- [ ] player turn when time travel (xIsNext state)
+- [x] player turn when time travel (xIsNext state)
