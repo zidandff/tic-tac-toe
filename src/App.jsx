@@ -2,31 +2,46 @@ import { useState } from 'react';
 import Board from './assets/scripts/components/board';
 
 function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
-  const [xIsNext, setXisNext] = useState(true);
+  const [history, setHistory] = useState([
+    {
+      cells: Array(9).fill(null),
+      xIsNext: true,
+    },
+  ]);
   const [currentMove, setCurrentMove] = useState(0);
-  const currentCells = history[currentMove];
-
-  function handlePlayAgain(winner) {
-    setHistory([Array(9).fill(null)]);
-    setCurrentMove(0);
-    if (winner === 'draw') {
-      setXisNext(xIsNext);
-    } else {
-      setXisNext(winner === 'x' ? true : false);
-    }
-  }
+  const { cells: currentCells, xIsNext: currentXisNext } = history[currentMove];
 
   function handlePlay(newCells) {
-    const newHistory = [...history.slice(0, currentMove + 1), newCells];
+    let newHistory = {
+      cells: newCells,
+      xIsNext: !currentXisNext, // TURN PLAYER MOVE
+    };
+    newHistory = [...history.slice(0, currentMove + 1), newHistory];
     setHistory(newHistory);
     setCurrentMove(newHistory.length - 1);
-    setXisNext(!xIsNext);
+  }
+
+  function handlePlayAgain(winner) {
+    // RESET PLAYER MOVE BY WHO'S WINNING LAST
+    const resetNextTurn = () => {
+      if (winner === 'draw') {
+        return !currentXisNext;
+      } else {
+        return winner === 'x' ? true : false;
+      }
+    };
+
+    setHistory([
+      {
+        cells: Array(9).fill(null),
+        xIsNext: resetNextTurn(),
+      },
+    ]);
+    setCurrentMove(0);
   }
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
-    // console.log(history[nextMove]);
   }
 
   const historyMove = history.map((cell, move) => {
@@ -48,7 +63,7 @@ function Game() {
     <div className="game">
       <Board
         cells={currentCells}
-        xIsNext={xIsNext}
+        xIsNext={currentXisNext}
         onPlay={handlePlay}
         onPlayAgain={handlePlayAgain}
       />
